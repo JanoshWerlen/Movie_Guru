@@ -1,0 +1,14 @@
+{"Title": "Air", "Boxoffice in Million": 52.4, "Runtime in Minutes": 112, "Original Language": "English", "Director": "BenAffleck", "release_month": "Apr", "rating": "R", "files": []}
+{"Title": "John Wick: Chapter 4", "Boxoffice in Million": 187.1, "Runtime in Minutes": 169, "Original Language": "English", "Director": "ChadStahelski", "release_month": "Mar", "rating": "R", "files": []}
+{"Title": "Barbie", "Boxoffice in Million": 636.2, "Runtime in Minutes": 114, "Original Language": "English", "Director": "GretaGerwig", "release_month": "Jul", "rating": "PG-13", "files": []}
+{"Title": "Spider-Man: Across the Spider-Verse", "Boxoffice in Million": 381.2, "Runtime in Minutes": 140, "Original Language": "English", "Director": "JoaquimDosSantos", "release_month": "Jun", "rating": "PG", "files": []}
+{"Title": "Killers of the Flower Moon", "Boxoffice in Million": 68.0, "Runtime in Minutes": 206, "Original Language": "English", "Director": "MartinScorsese", "release_month": "Oct", "rating": "R", "files": []}
+{"Title": "Mission: Impossible - Dead Reckoning Part One", "Boxoffice in Million": 172.0, "Runtime in Minutes": 163, "Original Language": "English", "Director": "ChristopherMcQuarrie", "release_month": "Jul", "rating": "PG-13", "files": []}
+{"Title": "Oppenheimer", "Boxoffice in Million": 329.3, "Runtime in Minutes": 180, "Original Language": "English", "Director": "ChristopherNolan", "release_month": "Jul", "rating": "R", "files": []}
+{"Title": "A Thousand and One", "Boxoffice in Million": 3.4, "Runtime in Minutes": 117, "Original Language": "English", "Director": "A.V.Rockwell", "release_month": "Mar", "rating": "R", "files": []}
+{"Title": "All of Us Strangers", "Boxoffice in Million": 4.0, "Runtime in Minutes": 105, "Original Language": "English", "Director": "AndrewHaigh", "release_month": "Dec", "rating": "R", "files": []}
+{"Title": "Guardians of the Galaxy Vol. 3", "Boxoffice in Million": 359.0, "Runtime in Minutes": 150, "Original Language": "English", "Director": "JamesGunn", "release_month": "May", "rating": "PG-13", "files": []}
+{"Title": "You Hurt My Feelings", "Boxoffice in Million": 3.8, "Runtime in Minutes": 93, "Original Language": "English", "Director": "NicoleHolofcener", "release_month": "May", "rating": "R", "files": []}
+{"Title": "Creed III", "Boxoffice in Million": 156.2, "Runtime in Minutes": 116, "Original Language": "English", "Director": "MichaelB.Jordan", "release_month": "Mar", "rating": "PG-13", "files": []}
+{"Title": "Anatomy of a Fall", "Boxoffice in Million": 5.1, "Runtime in Minutes": 150, "Original Language": "French", "Director": "JustineTriet", "release_month": "Oct", "rating": "R", "files": []}
+{"Title": "Poor Things", "Boxoffice in Million": 34.0, "Runtime in Minutes": 141, "Original Language": "English", "Director": "YorgosLanthimos", "release_month": "Dec", "rating": "R", "files": []}

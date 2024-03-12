@@ -27,3 +27,6 @@ class GpxSpider(scrapy.Spider):
                 'name': response.css('h1.title::text').extract_first(),
                 'url': response.url
             }
+
+
+

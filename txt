@@ -1,0 +1,15 @@
+https://www.goodreads.com/choiceawards/best-books-2023
+
+
+        # Extract the link for the next page, if available
+        next_page = response.css('a#NextLink::attr(href)').get()
+        if next_page:
+            yield response.follow(next_page, self.parse)
+
+    def parse_detail_page(self, response):
+        yield {
+            'Title': response.css("h1.title::text").get(),
+            'Director': response.css("li.info-item:nth-child(4) > p:nth-child(1) > span:nth-child(2) > a:nth-child(1)::text").get(),
+            'Boxoffice': response.css("li.info-item:nth-child(9) > p:nth-child(1) > span:nth-child(2)::text").get(),
+            'Studio': response.css("li.info-item:nth-child(11) > p:nth-child(1) > span:nth-child(2)::text").get()
+        }

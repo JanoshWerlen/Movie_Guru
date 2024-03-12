@@ -14,8 +14,8 @@ parser.add_argument('-u', '--uri', required=True, help="mongodb uri with usernam
 args = parser.parse_args()
 
 mongo_uri = args.uri
-mongo_db = "tracks"
-mongo_collection = "tracks"
+mongo_db = "movies"
+mongo_collection = "movies"
 
 client = MongoClient(mongo_uri)
 db = client[mongo_db]
