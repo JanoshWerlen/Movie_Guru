@@ -25,8 +25,9 @@ def convert_to_float(currency_str):
 
 class TopMoviesSpider(scrapy.Spider):
     name = 'top_movies'
-    start_urls = ['https://editorial.rottentomatoes.com/guide/best-2023-movies/']
+    start_urls = ['https://editorial.rottentomatoes.com/guide/oscars-best-and-worst-best-pictures/']
 
+#'https://editorial.rottentomatoes.com/guide/best-2023-movies/'
 
     
 

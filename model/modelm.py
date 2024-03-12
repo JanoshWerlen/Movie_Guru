@@ -1,3 +1,5 @@
+
+# python modelm.py -u "mongodb+srv://werleja1:Md1794682350.@mdmwerleja1.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000"
 import argparse
 import pandas as pd
 import seaborn as sn

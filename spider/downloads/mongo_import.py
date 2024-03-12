@@ -1,6 +1,6 @@
 # new terminal
 # cd spider/downloads
-# python .\mongo_import.py -c movies -i E:\VS_Code\ZHAW\Model_Deployment\HikePlanner\model\imdb_scraper\imdb_scraper\spiders\movies.jl -u 'mongodb+srv://werleja1:Md1794682350.@mdmwerleja1.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
+# python .\mongo_import.py -c movies -i "E:\VS_Code\ZHAW\Model_Deployment\HikePlanner\model\imdb_scraper\imdb_scraper\spiders\movies.jl" -u "mongodb+srv://werleja1:Md1794682350.@mdmwerleja1.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000"
 import argparse
 import json
 from pymongo import MongoClient
