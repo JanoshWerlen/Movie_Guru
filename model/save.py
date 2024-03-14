@@ -1,5 +1,5 @@
 # cd model
-# python save.py -c '***AZURE_STORAGE_CONNECTION_STRING***'
+# python save.py -c "DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net"
 
 import os, uuid
 from azure.identity import DefaultAzureCredential
@@ -30,7 +30,7 @@ try:
     for container in containers:
         existingContainerName = container['name']
         print(existingContainerName, container['metadata'])
-        if existingContainerName.startswith("hikeplanner-model"):
+        if existingContainerName.startswith("movie-model"):
             parts = existingContainerName.split("-")
             print(parts)
             if (len(parts) == 3):
@@ -39,7 +39,7 @@ try:
                     suffix = newSuffix
 
     suffix += 1
-    container_name = str("hikeplanner-model-" + str(suffix))
+    container_name = str("movie-model-" + str(suffix))
     print("new container name: ")
     print(container_name)
 
@@ -53,7 +53,7 @@ try:
         # Create the container
         container_client = blob_service_client.create_container(container_name)
 
-    local_file_name = "GradientBoostingRegressor.pkl"
+    local_file_name = "LinearRegressionModel.pkl"
     upload_file_path = os.path.join(".", local_file_name)
 
     # Create a blob client using the local file name as the name for the blob

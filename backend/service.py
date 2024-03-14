@@ -1,4 +1,11 @@
 # python -m flask --debug --app service run (works also in PowerShell)
+# $env:AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net"
+import os
+from flask.cli import load_dotenv
+
+
+load_dotenv()
+AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 import datetime
 import os
@@ -21,7 +28,7 @@ if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
     for container in containers:
         existingContainerName = container['name']
         print("checking container " + existingContainerName)
-        if existingContainerName.startswith("hikeplanner-model"):
+        if existingContainerName.startswith("movie-model"):
             parts = existingContainerName.split("-")
             print(parts)
             suffix = 1
@@ -30,14 +37,14 @@ if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
                 if (newSuffix > suffix):
                     suffix = newSuffix
 
-    container_client = blob_service_client.get_container_client("hikeplanner-model-" + str(suffix))
+    container_client = blob_service_client.get_container_client("movie-model-" + str(suffix))
     blob_list = container_client.list_blobs()
     for blob in blob_list:
         print("\t" + blob.name)
 
     # Download the blob to a local file
     Path("../model").mkdir(parents=True, exist_ok=True)
-    download_file_path = os.path.join("../model", "GradientBoostingRegressor.pkl")
+    download_file_path = os.path.join("../model", "LinearRegressionModel.pkl")
     print("\nDownloading blob to \n\t" + download_file_path)
 
     with open(file=download_file_path, mode="wb") as download_file:
@@ -48,9 +55,33 @@ else:
     print(os.environ)
     print("AZURE_STORAGE_CONNECTION_STRING not set")    
 
-file_path = Path(".", "../model/", "GradientBoostingRegressor.pkl")
+file_path = Path(".", "../model/", "LinearRegressionModel.pkl")
 with open(file_path, 'rb') as fid:
     model = pickle.load(fid)
+
+
+
+feature_names = ['Runtime in Minutes', 'is_summer', 'is_R_rated', 'is_english']
+
+# Create a demo input matching the training features
+demo_input = {
+    'is_summer': [1],  # Example values
+    'is_R_rated': [1],
+    'is_english': [1],
+    'Runtime in Minutes': [200]
+}
+
+# Create the DataFrame using the feature names
+demo_df = pd.DataFrame(demo_input, columns=feature_names)
+
+# Now you can use demo_df for prediction
+demo_output = model.predict(demo_df)
+print("Predicted Box Office (in Million):", demo_output[0])
+
+
+
+
+"""
 
 print("*** Sample calculation with model ***")
 def din33466(uphill, downhill, distance):
@@ -106,3 +137,5 @@ def hello_world():
         'din33466': str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))),
         'sac': str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length)))
         })
+
+"""

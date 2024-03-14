@@ -5,6 +5,9 @@ import pandas as pd
 import seaborn as sn
 import matplotlib.pyplot as plt
 from pymongo import MongoClient
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import pickle
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='Create Model')
@@ -20,10 +23,8 @@ client = MongoClient(mongo_uri)
 db = client[mongo_db]
 collection = db[mongo_collection]
 
-# Fetch documents
 documents = list(collection.find({}))
 
-# Create DataFrame
 df = pd.DataFrame(documents)
 
 # Transformations
@@ -34,14 +35,72 @@ df['is_english'] = df['Original Language'].apply(lambda x: 1 if x == "English" e
 df["Boxoffice in Million"] = pd.to_numeric(df["Boxoffice in Million"], errors='coerce')
 df["Runtime in Minutes"] = pd.to_numeric(df["Runtime in Minutes"], errors='coerce')
 
-# Keep only numeric columns
 df = df.select_dtypes(include=['number'])
 
 # Handle missing values
-df.dropna(inplace=True)  # or df.fillna(0) if you prefer to fill with zeros
+df.dropna(inplace=True) 
 
-# Correlation Analysis
+
+# Select features and target
+X = df.drop(columns=['Boxoffice in Million'])  # assuming this is your target column
+y = df['Boxoffice in Million']
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train the linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+
+print("X_test contents:")
+print(X_test.head())
+
+
+# Predictions for testing set
+y_pred = model.predict(X_test)
+
+# Plotting the regression results
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, color='blue')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=4)
+plt.xlabel('Actual')
+plt.ylabel('Predicted')
+plt.title('Actual vs Predicted Box Office')
+plt.show()
+
+
+
+
+print("*** DEMO ***")
+is_summer = 1
+is_R_rated = 1
+is_english = 1
+Runtime_in_Minutes = 170
+"""
+print("Downhill: " + str(downhill))
+print("Uphill: " + str(uphill))
+print("Length: " + str(length))
+demoinput = [[downhill,uphill,length,max_elevation]]
+demodf = pd.DataFrame(columns=['downhill', 'uphill', 'length_3d', 'max_elevation'], data=demoinput)
+demooutput = gbr.predict(demodf)
+time = demooutput[0]
+"""
+
+
+
+
+# Displaying the correlation heatmap
 corr = df.corr()
 print(corr)
 sn.heatmap(corr, annot=True)
 plt.show()
+
+"""
+# Save the trained model
+with open('LinearRegressionModel.pkl', 'wb') as file:
+    pickle.dump(model, file)
+
+# Load the model (example)
+with open('LinearRegressionModel.pkl', 'rb') as file:
+    loaded_model = pickle.load(file)"""
