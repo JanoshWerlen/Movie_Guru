@@ -33,9 +33,12 @@ def convert_to_float(currency_str):
 class TopMoviesSpider(scrapy.Spider):
     name = 'top_movies'
     start_urls = [
+        "https://editorial.rottentomatoes.com/guide/best-asian-american-movies/",
         "https://editorial.rottentomatoes.com/guide/best-horror-movies-of-all-time/",
-        'https://editorial.rottentomatoes.com/guide/oscars-best-and-worst-best-pictures/'
+        "https://editorial.rottentomatoes.com/guide/worst-sequels-of-all-time/",
+        "https://editorial.rottentomatoes.com/guide/best-sports-movie-of-all-time/"
     ]
+    
 
     def parse(self, response):
         href_links = response.css(".col-sm-6 a::attr(href)").getall()
@@ -53,6 +56,10 @@ class TopMoviesSpider(scrapy.Spider):
             boxoffice = convert_to_float(boxoffice_str) if boxoffice_str else None
             minutes_str = response.css("li.info-item:nth-child(10) > p:nth-child(1) > span:nth-child(2) > time:nth-child(1)::text").get().strip().replace(" ", "")
             minutes = convert_to_minutes(minutes_str) if minutes_str else None
+            audience_score_str = response.css("#scoreboard::attr(audiencescore)").get().strip().replace(" ", "")
+            audience_score = convert_to_float(audience_score_str) if audience_score_str else None
+            tomato_score_str = response.css("#scoreboard::attr(tomatometerscore)").get().strip().replace(" ", "")
+            tomato_score = convert_to_float(tomato_score_str) if tomato_score_str else None
 
             yield {
                 "Title": title, 
@@ -61,6 +68,8 @@ class TopMoviesSpider(scrapy.Spider):
                 "Original Language": response.css("li.info-item:nth-child(3) > p:nth-child(1) > span:nth-child(2)::text").get().strip().replace(" ", ""),
                 "Director": response.css("li.info-item:nth-child(4) > p:nth-child(1) > span:nth-child(2) > a:nth-child(1)::text").get().strip().replace(" ", ""),
                 "release_month": month.strip().replace(" ", ""),
-                "rating" : rating.strip().replace(" ", "")
+                "rating" : rating.strip().replace(" ", ""),
+                "audience_score": audience_score,
+                "tomato_score": tomato_score
             }
-
+            

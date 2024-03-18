@@ -16,6 +16,9 @@ def to_document(item):
             "Director": item["Director"],
             "release_month": item["release_month"],
             "rating": item["rating"],
+            "audience_score": item["audience_score"],
+            "tomato_score": item["tomato_score"]
+
         }
         return doc
     except Exception as e:

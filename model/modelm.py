@@ -34,11 +34,16 @@ df['is_R_rated'] = df['rating'].apply(lambda x: 1 if x == "R" else 0)
 df['is_english'] = df['Original Language'].apply(lambda x: 1 if x == "English" else 0)
 df["Boxoffice in Million"] = pd.to_numeric(df["Boxoffice in Million"], errors='coerce')
 df["Runtime in Minutes"] = pd.to_numeric(df["Runtime in Minutes"], errors='coerce')
+df["Director_is_PeterJackson"] = df["Director"].apply(lambda x: 1 if x=="PeterJackson" else 0)
+df["audience_score"] = pd.to_numeric(df["audience_score"], errors = "coerce")
+df["tomato_score"] = pd.to_numeric(df["tomato_score"], errors = "coerce")
 
 df = df.select_dtypes(include=['number'])
 
 # Handle missing values
 df.dropna(inplace=True) 
+
+print(df.count())
 
 
 # Select features and target
@@ -70,14 +75,14 @@ plt.title('Actual vs Predicted Box Office')
 plt.show()
 
 
-
+"""
 
 print("*** DEMO ***")
 is_summer = 1
 is_R_rated = 1
 is_english = 1
 Runtime_in_Minutes = 170
-"""
+
 print("Downhill: " + str(downhill))
 print("Uphill: " + str(uphill))
 print("Length: " + str(length))
@@ -87,15 +92,13 @@ demooutput = gbr.predict(demodf)
 time = demooutput[0]
 """
 
-
-
-
-# Displaying the correlation heatmap
 corr = df.corr()
 print(corr)
 sn.heatmap(corr, annot=True)
 plt.show()
 
+
+#Umcomment for use!
 """
 # Save the trained model
 with open('LinearRegressionModel.pkl', 'wb') as file:

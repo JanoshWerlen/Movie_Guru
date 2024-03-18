@@ -11,80 +11,113 @@
         count++;
     }
 
-    let downhill = 0;
-    let uphill = 0;
-    let length = 0;
+    let Runtime_in_Minutes = 0;
+    let is_R_rated = 0;
+    let is_english = 0;
+    let is_summer = 0;
+    let is_jakson = 0;
+    let audience_score = 0;
+    let tomato_score = 0;
 
-    let prediction = "n.a.";
-    let din33466 = "n.a.";
-    let sac = "n.a.";
+    let predictedBoxOffice = "n.a.";
 
     async function predict() {
-        let result = await fetch(
-            url +
-                "/api/predict?" +
-                new URLSearchParams({
-                    downhill: downhill,
-                    uphill: uphill,
-                    length: length,
-                }),
+        let response = await fetch(
+            `${url}/api/predict?` + new URLSearchParams({
+                Runtime_in_Minutes,
+                is_R_rated: is_R_rated ? 1 : 0,
+                is_english: is_english ? 1 : 0,
+                is_summer: is_summer ? 1 : 0,
+                is_jakson: is_jakson ? 1 : 0,
+                audience_score,
+                tomato_score
+            }),
             {
                 method: "GET",
-            },
+            }
         );
-        let data = await result.json();
-        console.log(data);
-        prediction = data.time;
-        din33466 = data.din33466;
-        sac = data.sac;
+        let data = await response.json();
+        predictedBoxOffice = data.predicted_box_office;
     }
 </script>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        padding: 20px;
+    }
 
-<h1>HikePlanner</h1>
-<p>
-    Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
+    h1 {
+        color: #007BFF;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    input[type="number"], input[type="checkbox"] {
+        margin-left: 10px;
+    }
+
+    button {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        margin: 20px 0;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    table {
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+    td {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<h1>Box_Office_Guru</h1>
+
+<p><strong>Runtime in Minutes</strong>
+    <input type="number" bind:value={Runtime_in_Minutes} min="10" max="300" />
 </p>
 
-<button on:click={increment}>
-    Clicked {count}
-    {count === 1 ? "time" : "times"}
-</button>
-
-<p>
-    <strong>Abwärts [m]</strong>
-    <label>
-        <input type="number" bind:value={downhill} min="0" max="10000" />
-        <input type="range" bind:value={downhill} min="0" max="10000" />
-    </label>
+<p><strong>Is the Movie R rated (18+)?</strong>
+    <input type="checkbox" bind:checked={is_R_rated} />
 </p>
 
-<p>
-    <strong>Aufwärts [m]</strong>
-    <label>
-        <input type="number" bind:value={uphill} min="0" max="10000" />
-        <input type="range" bind:value={uphill} min="0" max="10000" />
-    </label>
+<p><strong>Original Language is English?</strong>
+    <input type="checkbox" bind:checked={is_english} />
 </p>
 
-<p>
-    <strong>Distanz [m]</strong>
-    <label>
-        <input type="number" bind:value={length} min="0" max="30000" />
-        <input type="range" bind:value={length} min="0" max="30000" />
-    </label>
+<p><strong>Released in Summer (April - September)?</strong>
+    <input type="checkbox" bind:checked={is_summer} />
+</p>
+<p><strong>was directed by Peter Jackson??</strong>
+    <input type="checkbox" bind:checked={is_jakson} />
+</p>
+<p><strong>Audience Score?</strong>
+    <input type="checkbox" bind:checked={audience_score} />
+</p>
+<p><strong>Tomatoscore?</strong>
+    <input type="checkbox" bind:checked={audience_score} />
 </p>
 
-<button on:click={predict}>Predict</button>
+<button on:click={predict}>Predict Box Office</button>
 
-<p></p>
 <table>
     <tr>
-        <td>Dauer:</td><td>{prediction}</td>
-    </tr>
-    <tr>
-        <td>DIN33466:</td><td>{din33466}</td>
-    </tr>
-    <tr>
-        <td>SAC:</td><td>{sac}</td>
+        <td>Predicted Box Office:</td>
+        <td>{predictedBoxOffice}</td>
+        <td>Million</td>
     </tr>
 </table>

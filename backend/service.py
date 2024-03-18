@@ -59,7 +59,7 @@ file_path = Path(".", "../model/", "LinearRegressionModel.pkl")
 with open(file_path, 'rb') as fid:
     model = pickle.load(fid)
 
-
+"""
 
 feature_names = ['Runtime in Minutes', 'is_summer', 'is_R_rated', 'is_english']
 
@@ -78,7 +78,44 @@ demo_df = pd.DataFrame(demo_input, columns=feature_names)
 demo_output = model.predict(demo_df)
 print("Predicted Box Office (in Million):", demo_output[0])
 
+"""
 
+print("*** Init Flask App ***")
+app = Flask(__name__)
+cors = CORS(app)
+app = Flask(__name__, static_url_path='/', static_folder='../frontend/build')
+
+@app.route("/")
+def indexPage():
+     return send_file("../frontend/build/index.html")  
+
+@app.route("/api/predict")
+def predict():
+    is_summer = request.args.get('is_summer', default=0, type=int)
+    is_R_rated = request.args.get('is_R_rated', default=0, type=int)
+    is_english = request.args.get('is_english', default=0, type=int)
+    Runtime_in_Minutes = request.args.get('Runtime_in_Minutes', default=0, type=int)
+    is_jackson = request.args.get('Director_is_PeterJackson', default=0, type=int)
+    audience_score = request.args.get('Runtime_in_Minutes', default=0, type=int)
+    tomato_score = request.args.get('tomato_score', default=0, type=int)
+
+    print(is_summer)
+
+
+    print(f"is_summer: {is_summer}\n")
+    print(f"is_R_rated: {is_R_rated}\n")
+    print(f"is_english: {is_english}\n")
+    print(f"Runtime_in_Minutes: {Runtime_in_Minutes}\n")
+
+
+    demo_input = [[Runtime_in_Minutes, is_summer, is_R_rated, is_english,is_jackson, audience_score,tomato_score]]
+    demo_df = pd.DataFrame(columns=['Runtime in Minutes', 'is_summer', 'is_R_rated', 'is_english', 'Director_is_PeterJackson', 'audience_score', 'tomato_score'], data=demo_input)
+    demo_output = model.predict(demo_df)
+    predicted_box_office = round(demo_output[0],2)
+    return jsonify({"predicted_box_office": predicted_box_office})
+
+
+   
 
 
 """
@@ -112,27 +149,7 @@ print("Our Model: " + str(datetime.timedelta(seconds=time)))
 print("DIN33466: " + str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))))
 print("SAC: " + str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length))))
 
-print("*** Init Flask App ***")
-app = Flask(__name__)
-cors = CORS(app)
-app = Flask(__name__, static_url_path='/', static_folder='../frontend/build')
-
-@app.route("/")
-def indexPage():
-     return send_file("../frontend/build/index.html")  
-
-@app.route("/api/predict")
-def hello_world():
-    downhill = request.args.get('downhill', default = 0, type = int)
-    uphill = request.args.get('uphill', default = 0, type = int)
-    length = request.args.get('length', default = 0, type = int)
-
-    demoinput = [[downhill,uphill,length,0]]
-    demodf = pd.DataFrame(columns=['downhill', 'uphill', 'length_3d', 'max_elevation'], data=demoinput)
-    demooutput = model.predict(demodf)
-    time = demooutput[0]
-
-    return jsonify({
+ return jsonify({
         'time': str(datetime.timedelta(seconds=time)),
         'din33466': str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))),
         'sac': str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length)))
