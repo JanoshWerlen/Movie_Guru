@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
           
       - name: scrape hikr data 
-        working-directory: ./model/imdb_scraper/imdb_scraper/spider
+        working-directory: ./model/imdb_scraper/imdb_scraper/spiders
         run: scrapy crawl top_movies -s CLOSESPIDER_PAGECOUNT=50 -o movies.jl
 
       - name: upload data to mongodb
