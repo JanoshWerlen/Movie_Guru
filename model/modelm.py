@@ -42,9 +42,9 @@ df = df.select_dtypes(include=['number'])
 
 print(df.head())
 
+
 #['is_summer','is_R_rated','is_english',"Boxoffice in Million","Runtime in Minutes","Director_is_PeterJackson", "audience_score", "tomato_score"]
 
-# Handle missing values
 df.dropna(inplace=True) 
 
 print(df.count())
@@ -66,7 +66,6 @@ print("X_test contents:")
 print(X_test.head())
 
 
-# Predictions for testing set
 y_pred = model.predict(X_test)
 
 # Plotting the regression results
