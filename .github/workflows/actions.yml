@@ -23,11 +23,11 @@ jobs:
           
       - name: scrape hikr data 
         working-directory: ./model/imdb_scraper/imdb_scraper/spiders
-        run: scrapy crawl top_movies -s CLOSESPIDER_PAGECOUNT=50 -o movies.jl
+        run: scrapy crawl top_movies -s CLOSESPIDER_PAGECOUNT=10 -o movies.jl
 
       - name: upload data to mongodb
         working-directory: spider/downloads
-        run: python ./mongo_import.py -c tracks -i ../file.jl -u "${{secrets.MONGODB_URI}}"
+        run: python ./mongo_import.py -c tracks -i ../movies.jl -u "${{secrets.MONGODB_URI}}"
 
       - name: build model
         working-directory: model
