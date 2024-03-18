@@ -106,10 +106,10 @@
     <input type="checkbox" bind:checked={is_jakson} />
 </p>
 <p><strong>Audience Score?</strong>
-    <input type="checkbox" bind:checked={audience_score} />
+    <input type="number" bind:value={audience_score} min="0" max="100" />
 </p>
 <p><strong>Tomatoscore?</strong>
-    <input type="checkbox" bind:checked={audience_score} />
+    <input type="number" bind:value={tomato_score} min="0" max="100" />
 </p>
 
 <button on:click={predict}>Predict Box Office</button>

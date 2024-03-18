@@ -1,5 +1,12 @@
 # python -m flask --debug --app service run (works also in PowerShell)
 # $env:AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net"
+from flask_cors import CORS
+from flask import Flask, jsonify, request, send_file
+from azure.storage.blob import BlobServiceClient
+import pandas as pd
+from pathlib import Path
+import pickle
+import datetime
 import os
 from flask.cli import load_dotenv
 
@@ -7,21 +14,13 @@ from flask.cli import load_dotenv
 load_dotenv()
 AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
-import datetime
-import os
-import pickle
-from pathlib import Path
-
-import pandas as pd
-from azure.storage.blob import BlobServiceClient
-from flask import Flask, jsonify, request, send_file
-from flask_cors import CORS
 
 # init app, load model from storage
 print("*** Init and load model ***")
 if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
     azureStorageConnectionString = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-    blob_service_client = BlobServiceClient.from_connection_string(azureStorageConnectionString)
+    blob_service_client = BlobServiceClient.from_connection_string(
+        azureStorageConnectionString)
 
     print("fetching blob containers...")
     containers = blob_service_client.list_containers(include_metadata=True)
@@ -37,10 +36,12 @@ if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
                 if (newSuffix > suffix):
                     suffix = newSuffix
 
-    container_client = blob_service_client.get_container_client("movie-model-" + str(suffix))
+    container_client = blob_service_client.get_container_client(
+        "movie-model-" + str(suffix))
     blob_list = container_client.list_blobs()
     for blob in blob_list:
         print("\t" + blob.name)
+        print(suffix)
 
     # Download the blob to a local file
     Path("../model").mkdir(parents=True, exist_ok=True)
@@ -48,12 +49,13 @@ if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
     print("\nDownloading blob to \n\t" + download_file_path)
 
     with open(file=download_file_path, mode="wb") as download_file:
-         download_file.write(container_client.download_blob(blob.name).readall())
+        download_file.write(
+            container_client.download_blob(blob.name).readall())
 
 else:
     print("CANNOT ACCESS AZURE BLOB STORAGE - Please set connection string as env variable")
     print(os.environ)
-    print("AZURE_STORAGE_CONNECTION_STRING not set")    
+    print("AZURE_STORAGE_CONNECTION_STRING not set")
 
 file_path = Path(".", "../model/", "LinearRegressionModel.pkl")
 with open(file_path, 'rb') as fid:
@@ -85,37 +87,40 @@ app = Flask(__name__)
 cors = CORS(app)
 app = Flask(__name__, static_url_path='/', static_folder='../frontend/build')
 
+
 @app.route("/")
 def indexPage():
-     return send_file("../frontend/build/index.html")  
+    return send_file("../frontend/build/index.html")
+
 
 @app.route("/api/predict")
 def predict():
-    is_summer = request.args.get('is_summer', default=0, type=int)
-    is_R_rated = request.args.get('is_R_rated', default=0, type=int)
-    is_english = request.args.get('is_english', default=0, type=int)
-    Runtime_in_Minutes = request.args.get('Runtime_in_Minutes', default=0, type=int)
-    is_jackson = request.args.get('Director_is_PeterJackson', default=0, type=int)
-    audience_score = request.args.get('Runtime_in_Minutes', default=0, type=int)
-    tomato_score = request.args.get('tomato_score', default=0, type=int)
-
-    print(is_summer)
-
-
-    print(f"is_summer: {is_summer}\n")
-    print(f"is_R_rated: {is_R_rated}\n")
-    print(f"is_english: {is_english}\n")
-    print(f"Runtime_in_Minutes: {Runtime_in_Minutes}\n")
+    try:
+        # Extracting features from the query parameters
+        is_summer = request.args.get('is_summer', default=0, type=int)
+        is_R_rated = request.args.get('is_R_rated', default=0, type=int)
+        is_english = request.args.get('is_english', default=0, type=int)
+        Runtime_in_Minutes = request.args.get(
+            'Runtime_in_Minutes', default=0, type=int)
+        Director_is_PeterJackson = request.args.get(
+            'Director_is_PeterJackson', default=0, type=int)
+        audience_score = request.args.get(
+            'audience_score', default=0, type=int)
+        tomato_score = request.args.get('tomato_score', default=0, type=int)
 
 
-    demo_input = [[Runtime_in_Minutes, is_summer, is_R_rated, is_english,is_jackson, audience_score,tomato_score]]
-    demo_df = pd.DataFrame(columns=['Runtime in Minutes', 'is_summer', 'is_R_rated', 'is_english', 'Director_is_PeterJackson', 'audience_score', 'tomato_score'], data=demo_input)
-    demo_output = model.predict(demo_df)
-    predicted_box_office = round(demo_output[0],2)
-    return jsonify({"predicted_box_office": predicted_box_office})
+# ['is_summer','is_R_rated','is_english',"Runtime in Minutes","Director_is_PeterJackson", "audience_score", "tomato_score"]
+        # Creating the input DataFrame
+        demo_input = [[Runtime_in_Minutes,audience_score,tomato_score, is_summer, is_R_rated, is_english,Director_is_PeterJackson]]
+        demo_df = pd.DataFrame(columns=['Runtime in Minutes','audience_score', 'tomato_score', 'is_summer', 'is_R_rated', 'is_english','Director_is_PeterJackson'], data=demo_input)
 
-
-   
+        # Making prediction
+        demo_output = model.predict(demo_df)
+        predicted_box_office = round(demo_output[0], 2)
+        print(predicted_box_office)
+        return jsonify({"predicted_box_office": predicted_box_office})
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 
 """

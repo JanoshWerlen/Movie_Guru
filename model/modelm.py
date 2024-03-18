@@ -40,6 +40,10 @@ df["tomato_score"] = pd.to_numeric(df["tomato_score"], errors = "coerce")
 
 df = df.select_dtypes(include=['number'])
 
+print(df.head())
+
+#['is_summer','is_R_rated','is_english',"Boxoffice in Million","Runtime in Minutes","Director_is_PeterJackson", "audience_score", "tomato_score"]
+
 # Handle missing values
 df.dropna(inplace=True) 
 
@@ -75,13 +79,24 @@ plt.title('Actual vs Predicted Box Office')
 plt.show()
 
 
-"""
+
 
 print("*** DEMO ***")
 is_summer = 1
 is_R_rated = 1
 is_english = 1
 Runtime_in_Minutes = 170
+Director_is_PeterJackson = 1
+audience_score = 70
+tomato_score = 40
+
+demo_input = [[Runtime_in_Minutes,audience_score,tomato_score, is_summer, is_R_rated, is_english,Director_is_PeterJackson]]
+demo_df = pd.DataFrame(columns=['Runtime in Minutes','audience_score', 'tomato_score', 'is_summer', 'is_R_rated', 'is_english','Director_is_PeterJackson'], data=demo_input)
+demooutput = model.predict(demo_df)
+prediction = demooutput[0]
+print(prediction)
+
+"""
 
 print("Downhill: " + str(downhill))
 print("Uphill: " + str(uphill))
@@ -99,11 +114,11 @@ plt.show()
 
 
 #Umcomment for use!
-"""
+
 # Save the trained model
 with open('LinearRegressionModel.pkl', 'wb') as file:
     pickle.dump(model, file)
 
 # Load the model (example)
 with open('LinearRegressionModel.pkl', 'rb') as file:
-    loaded_model = pickle.load(file)"""
+    loaded_model = pickle.load(file)
