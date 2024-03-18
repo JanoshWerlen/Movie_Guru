@@ -22,8 +22,8 @@ jobs:
         run: pip install -r requirements.txt
           
       - name: scrape hikr data 
-        working-directory: ./spider
-        run: scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=50 -o file.jl
+        working-directory: ./model/imdb_scraper/imdb_scraper/spider
+        run: scrapy crawl top_movies -s CLOSESPIDER_PAGECOUNT=50 -o movies.jl
 
       - name: upload data to mongodb
         working-directory: spider/downloads
@@ -31,7 +31,7 @@ jobs:
 
       - name: build model
         working-directory: model
-        run: python ./model.py -u "${{secrets.MONGODB_URI}}"
+        run: python ./modelm.py -u "${{secrets.MONGODB_URI}}"
 
       - name: upload model
         working-directory: model
