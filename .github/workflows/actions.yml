@@ -1,8 +1,8 @@
 name: Scrape Data, build and upload Model
 
-on:
-  push:
-  workflow_dispatch:
+#on:
+ # push:
+ # workflow_dispatch:
 
 jobs:
   build:

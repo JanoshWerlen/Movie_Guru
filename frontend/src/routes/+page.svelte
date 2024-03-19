@@ -20,8 +20,12 @@
     let tomato_score = 0;
 
     let predictedBoxOffice = "n.a.";
+    let similar_movies = {};
 
     async function predict() {
+        if (!validateInputs()) {
+        return; // Stop the function if validation fails
+    }
         let response = await fetch(
             `${url}/api/predict?` + new URLSearchParams({
                 Runtime_in_Minutes,
@@ -38,7 +42,24 @@
         );
         let data = await response.json();
         predictedBoxOffice = data.predicted_box_office;
+        similar_movies = data.similar_movies;
     }
+    function validateInputs() {
+    if (Runtime_in_Minutes < 10 || Runtime_in_Minutes > 300) {
+        alert('Runtime in Minutes must be between 10 and 300.');
+        return false;
+    }
+    if (audience_score < 0 || audience_score > 100) {
+        alert('Audience Score must be between 0 and 100.');
+        return false;
+    }
+    if (tomato_score < 0 || tomato_score > 100) {
+        alert('Tomato Score must be between 0 and 100.');
+        return false;
+    }
+    return true;
+    }
+
 </script>
 <style>
     body {
@@ -117,7 +138,15 @@
 <table>
     <tr>
         <td>Predicted Box Office:</td>
-        <td>{predictedBoxOffice}</td>
-        <td>Million</td>
+        <td>{predictedBoxOffice} Million</td>
     </tr>
+    <tr>
+        <td>Movies with a similar BoxOffice (+-5 Million):</td>
+        <td>
+            {#each similar_movies as movie}
+                <div>{movie}</div>
+            {/each}
+        </td>
+    </tr>
+    
 </table>

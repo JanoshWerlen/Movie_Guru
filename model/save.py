@@ -53,16 +53,23 @@ try:
         # Create the container
         container_client = blob_service_client.create_container(container_name)
 
-    local_file_name = "LinearRegressionModel.pkl"
-    upload_file_path = os.path.join(".", local_file_name)
+    def upload_model(model_name):
+        local_file_name = model_name
+        upload_file_path = os.path.join(".", local_file_name)
 
-    # Create a blob client using the local file name as the name for the blob
-    blob_client = blob_service_client.get_blob_client(container=container_name, blob=local_file_name)
-    print("\nUploading to Azure Storage as blob:\n\t" + local_file_name)
+        # Create a blob client using the local file name as the name for the blob
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=local_file_name)
+        print("\nUploading to Azure Storage as blob:\n\t" + local_file_name)
 
-    # Upload the created file
-    with open(file=upload_file_path, mode="rb") as data:
-        blob_client.upload_blob(data)
+        # Upload the created file
+        with open(file=upload_file_path, mode="rb") as data:
+            blob_client.upload_blob(data)
+        
+        print("Uploaded: " + model_name)
+
+    upload_model("LinearRegressionModel.pkl")
+    upload_model("DecisionTreeModel.pkl")
+    upload_model("DataFrameAllDocs.pkl")
 
 except Exception as ex:
     print('Exception:')

@@ -1,5 +1,6 @@
 # python -m flask --debug --app service run (works also in PowerShell)
 # $env:AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net"
+
 from flask_cors import CORS
 from flask import Flask, jsonify, request, send_file
 from azure.storage.blob import BlobServiceClient
@@ -11,9 +12,11 @@ import os
 from flask.cli import load_dotenv
 
 
-load_dotenv()
-AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
+#load_dotenv()
+#AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+model_files = ["LinearRegressionModel.pkl", "DecisionTreeModel.pkl", "DataFrameAllDocs.pkl"]
+model_in_use = "DecisionTreeModel.pkl"
 
 # init app, load model from storage
 print("*** Init and load model ***")
@@ -45,42 +48,31 @@ if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
 
     # Download the blob to a local file
     Path("../model").mkdir(parents=True, exist_ok=True)
-    download_file_path = os.path.join("../model", "LinearRegressionModel.pkl")
-    print("\nDownloading blob to \n\t" + download_file_path)
+    for model_file in model_files:
+        download_file_path = os.path.join("../model", model_file)
+        print("\nDownloading blob to \n\t" + download_file_path)
 
-    with open(file=download_file_path, mode="wb") as download_file:
-        download_file.write(
-            container_client.download_blob(blob.name).readall())
+        with open(file=download_file_path, mode="wb") as download_file:
+            download_file.write(container_client.download_blob(model_file).readall())
+        print("Downloaded: " + model_file)
 
 else:
     print("CANNOT ACCESS AZURE BLOB STORAGE - Please set connection string as env variable")
     print(os.environ)
     print("AZURE_STORAGE_CONNECTION_STRING not set")
 
+
 file_path = Path(".", "../model/", "LinearRegressionModel.pkl")
 with open(file_path, 'rb') as fid:
-    model = pickle.load(fid)
+    model_lr = pickle.load(fid)
 
-"""
+file_path = Path(".", "../model/", "DecisionTreeModel.pkl")
+with open(file_path, 'rb') as fid:
+    model_dt = pickle.load(fid)
 
-feature_names = ['Runtime in Minutes', 'is_summer', 'is_R_rated', 'is_english']
-
-# Create a demo input matching the training features
-demo_input = {
-    'is_summer': [1],  # Example values
-    'is_R_rated': [1],
-    'is_english': [1],
-    'Runtime in Minutes': [200]
-}
-
-# Create the DataFrame using the feature names
-demo_df = pd.DataFrame(demo_input, columns=feature_names)
-
-# Now you can use demo_df for prediction
-demo_output = model.predict(demo_df)
-print("Predicted Box Office (in Million):", demo_output[0])
-
-"""
+file_path = Path(".", "../model/", "DataFrameAllDocs.pkl")
+with open(file_path, 'rb') as fid:
+    df_all_docs = pickle.load(fid)
 
 print("*** Init Flask App ***")
 app = Flask(__name__)
@@ -111,53 +103,37 @@ def predict():
 
 # ['is_summer','is_R_rated','is_english',"Runtime in Minutes","Director_is_PeterJackson", "audience_score", "tomato_score"]
         # Creating the input DataFrame
-        demo_input = [[Runtime_in_Minutes,audience_score,tomato_score, is_summer, is_R_rated, is_english,Director_is_PeterJackson]]
-        demo_df = pd.DataFrame(columns=['Runtime in Minutes','audience_score', 'tomato_score', 'is_summer', 'is_R_rated', 'is_english','Director_is_PeterJackson'], data=demo_input)
+        input = [[Runtime_in_Minutes,audience_score,tomato_score, is_summer, is_R_rated, is_english,Director_is_PeterJackson]]
+        df = pd.DataFrame(columns=['Runtime in Minutes','audience_score', 'tomato_score', 'is_summer', 'is_R_rated', 'is_english','Director_is_PeterJackson'], data=input)
+
+
 
         # Making prediction
-        demo_output = model.predict(demo_df)
-        predicted_box_office = round(demo_output[0], 2)
+        output_lr = model_lr.predict(df)
+        output_dr = model_dt.predict(df)
+        print(output_lr)
+        print(output_dr)
+
+        avg_prediction = (output_dr + output_lr) / 2
+        print(avg_prediction)
+        predicted_box_office = round(avg_prediction[0], 2)
+
+        target_boxoffice = predicted_box_office  # Example target value in millions
+        boxoffice_range = 5    # Example range in millions (+/- 5 in this case)
+
+        filtered_df = df_all_docs[(df_all_docs['Boxoffice in Million'] >= target_boxoffice - boxoffice_range) & 
+                 (df_all_docs['Boxoffice in Million'] <= target_boxoffice + boxoffice_range)]
+
+        filtered_df = filtered_df['Title']
+        filtered_df_head = filtered_df.head().tolist()
+        print("Filteres DF")
+        print(filtered_df.head())
+
+
         print(predicted_box_office)
-        return jsonify({"predicted_box_office": predicted_box_office})
+        return jsonify({"predicted_box_office": predicted_box_office ,"similar_movies": filtered_df_head})
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+    
 
-
-"""
-
-print("*** Sample calculation with model ***")
-def din33466(uphill, downhill, distance):
-    km = distance / 1000.0
-    print(km)
-    vertical = downhill / 500.0 + uphill / 300.0
-    print(vertical)
-    horizontal = km / 4.0
-    print(horizontal)
-    return 3600.0 * (min(vertical, horizontal) / 2 + max(vertical, horizontal))
-
-def sac(uphill, downhill, distance):
-    km = distance / 1000.0
-    return 3600.0 * (uphill/400.0 + km /4.0)
-
-downhill = 300
-uphill = 700
-length = 10000
-max_elevation = 1200
-print("Downhill: " + str(downhill))
-print("Uphill: " + str(uphill))
-print("Length: " + str(length))
-demoinput = [[downhill,uphill,length,max_elevation]]
-demodf = pd.DataFrame(columns=['downhill', 'uphill', 'length_3d', 'max_elevation'], data=demoinput)
-demooutput = model.predict(demodf)
-time = demooutput[0]
-print("Our Model: " + str(datetime.timedelta(seconds=time)))
-print("DIN33466: " + str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))))
-print("SAC: " + str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length))))
-
- return jsonify({
-        'time': str(datetime.timedelta(seconds=time)),
-        'din33466': str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))),
-        'sac': str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length)))
-        })
-
-"""
