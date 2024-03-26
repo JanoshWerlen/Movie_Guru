@@ -5,12 +5,6 @@
         url = "http://localhost:5000";
     }
 
-    let count = 0;
-
-    function increment() {
-        count++;
-    }
-
     let Runtime_in_Minutes = 0;
     let is_R_rated = 0;
     let is_english = 0;
@@ -62,15 +56,29 @@
 
 </script>
 <style>
-    body {
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         font-family: 'Arial', sans-serif;
         background-color: #f4f4f4;
         color: #333;
-        padding: 20px;
+    }
+
+    .container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        max-width: 500px;
+        text-align: center;
     }
 
     h1 {
         color: #007BFF;
+        margin-bottom: 30px;
     }
 
     p {
@@ -98,6 +106,7 @@
     table {
         margin-top: 20px;
         border-collapse: collapse;
+        width: 100%;
     }
 
     td {
@@ -106,47 +115,39 @@
     }
 </style>
 
-<h1>Box_Office_Guru</h1>
+<div class="container">
+    <h1>Box_Office_Guru</h1>
 
-<p><strong>Runtime in Minutes</strong>
-    <input type="number" bind:value={Runtime_in_Minutes} min="10" max="300" />
-</p>
+    <p><strong>Runtime in Minutes</strong>
+        <input type="number" bind:value={Runtime_in_Minutes} min="10" max="300" />
+    </p>
 
-<p><strong>Is the Movie R rated (18+)?</strong>
-    <input type="checkbox" bind:checked={is_R_rated} />
-</p>
+    <p><strong>Is the Movie R rated (18+)?</strong>
+        <input type="checkbox" bind:checked={is_R_rated} />
+    </p>
 
-<p><strong>Original Language is English?</strong>
-    <input type="checkbox" bind:checked={is_english} />
-</p>
+    <p><strong>Original Language is English?</strong>
+        <input type="checkbox" bind:checked={is_english} />
+    </p>
 
-<p><strong>Released in Summer (April - September)?</strong>
-    <input type="checkbox" bind:checked={is_summer} />
-</p>
-<p><strong>was directed by Peter Jackson??</strong>
-    <input type="checkbox" bind:checked={is_jakson} />
-</p>
-<p><strong>Audience Score?</strong>
-    <input type="number" bind:value={audience_score} min="0" max="100" />
-</p>
-<p><strong>Tomatoscore?</strong>
-    <input type="number" bind:value={tomato_score} min="0" max="100" />
-</p>
+    <p><strong>Tomatoscore?</strong>
+        <input type="number" bind:value={tomato_score} min="0" max="100" />
+    </p>
 
-<button on:click={predict}>Predict Box Office</button>
+    <button on:click={predict}>Predict Box Office</button>
 
-<table>
-    <tr>
-        <td>Predicted Box Office:</td>
-        <td>{predictedBoxOffice} Million</td>
-    </tr>
-    <tr>
-        <td>Movies with a similar BoxOffice (+-5 Million):</td>
-        <td>
-            {#each similar_movies as movie}
-                <div>{movie}</div>
-            {/each}
-        </td>
-    </tr>
-    
-</table>
+    <table>
+        <tr>
+            <td>Predicted Box Office:</td>
+            <td>{predictedBoxOffice} Million</td>
+        </tr>
+        <tr>
+            <td>Movies with a similar BoxOffice (+-5 Million):</td>
+            <td>
+                {#each similar_movies as movie}
+                    <div>{movie}</div>
+                {/each}
+            </td>
+        </tr>
+    </table>
+</div>

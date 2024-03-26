@@ -1,6 +1,5 @@
 # python -m flask --debug --app service run (works also in PowerShell)
 # $env:AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net"
-# set AZURE_STORAGE_CONNECTION_STRING = DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net
 
 from flask_cors import CORS
 from flask import Flask, jsonify, request, send_file
@@ -90,27 +89,34 @@ def indexPage():
 def predict():
     try:
         # Extracting features from the query parameters
+        is_summer = request.args.get('is_summer', default=0, type=int)
         is_R_rated = request.args.get('is_R_rated', default=0, type=int)
         is_english = request.args.get('is_english', default=0, type=int)
-        Runtime_in_Minutes = request.args.get('Runtime_in_Minutes', default=0, type=int)
+        Runtime_in_Minutes = request.args.get(
+            'Runtime_in_Minutes', default=0, type=int)
+        Director_is_PeterJackson = request.args.get(
+            'Director_is_PeterJackson', default=0, type=int)
+        audience_score = request.args.get(
+            'audience_score', default=0, type=int)
         tomato_score = request.args.get('tomato_score', default=0, type=int)
 
-        # Debugging: Print received parameters
-        print(f"Received parameters: is_R_rated={is_R_rated}, is_english={is_english}, Runtime_in_Minutes={Runtime_in_Minutes}, tomato_score={tomato_score}")
 
+# ['is_summer','is_R_rated','is_english',"Runtime in Minutes","Director_is_PeterJackson", "audience_score", "tomato_score"]
         # Creating the input DataFrame
-        input_data = [[Runtime_in_Minutes, tomato_score, is_R_rated, is_english]]
-        df = pd.DataFrame(columns=['Runtime in Minutes', 'tomato_score', 'is_R_rated', 'is_english'], data=input_data)
+        input = [[Runtime_in_Minutes,audience_score,tomato_score, is_summer, is_R_rated, is_english,Director_is_PeterJackson]]
+        df = pd.DataFrame(columns=['Runtime in Minutes','audience_score', 'tomato_score', 'is_summer', 'is_R_rated', 'is_english','Director_is_PeterJackson'], data=input)
+
+
 
         # Making prediction
         output_lr = model_lr.predict(df)
         output_dr = model_dt.predict(df)
-        print(f"Linear Regression Output: {output_lr}")
-        print(f"Decision Tree Output: {output_dr}")
+        print(output_lr)
+        print(output_dr)
 
         avg_prediction = (output_dr + output_lr) / 2
+        print(avg_prediction)
         predicted_box_office = round(avg_prediction[0], 2)
-        print(f"Predicted Box Office: {predicted_box_office}")
 
         target_boxoffice = predicted_box_office  # Example target value in millions
         boxoffice_range = 5    # Example range in millions (+/- 5 in this case)
@@ -127,7 +133,7 @@ def predict():
         print(predicted_box_office)
         return jsonify({"predicted_box_office": predicted_box_office ,"similar_movies": filtered_df_head})
     except Exception as e:
-        print(f"Error: {e}")
         return jsonify({"error": str(e)})
+    
     
 
