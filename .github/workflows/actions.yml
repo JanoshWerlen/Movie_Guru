@@ -1,8 +1,8 @@
 name: Scrape Data, build and upload Model
 
-#on:
- # push:
- # workflow_dispatch:
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,15 +20,15 @@ jobs:
           
       - name: install python packages
         run: pip install -r requirements.txt
-          """
-      - name: scrape movie data 
-        working-directory: ./model/imdb_scraper/imdb_scraper/spiders
-        run: scrapy crawl top_movies -s CLOSESPIDER_PAGECOUNT=10 -o movies_2.jl
-          """
-      - name: upload data to mongodb
-        working-directory: spider/downloads
-        run: python ./mongo_import.py -c movies -i ../../model/imdb_scraper/imdb_scraper/spiders/movies_2.jl -u "${{secrets.MONGODB_URI}}"
 
+     # - name: scrape movie data 
+      #  working-directory: ./model/imdb_scraper/imdb_scraper/spiders
+       # run: scrapy crawl top_movies -s CLOSESPIDER_PAGECOUNT=10 -o movies_2.jl
+          
+     # - name: upload data to mongodb
+      #  working-directory: spider/downloads
+       # run: python ./mongo_import.py -c movies -i ../../model/imdb_scraper/imdb_scraper/spiders/movies_2.jl -u "${{secrets.MONGODB_URI}}"
+   
       - name: build model
         working-directory: model
         run: python ./modelm.py -u "${{secrets.MONGODB_URI}}"
