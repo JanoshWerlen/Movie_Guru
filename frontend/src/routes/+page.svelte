@@ -56,7 +56,7 @@
 
 </script>
 <style>
-    html, body {
+    body {
         height: 100%;
         margin: 0;
         display: flex;

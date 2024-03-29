@@ -1,6 +1,7 @@
 # Usage
 # docker build -t werleja1/movie_guru .
 # docker run --name movie_guru -e AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net" -p 9001:80 -d werleja1/movie_guru
+# docker push werleja1/movie_guru:latest
 
 FROM python:3.12.1
 
