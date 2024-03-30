@@ -8,9 +8,6 @@
     let Runtime_in_Minutes = 0;
     let is_R_rated = 0;
     let is_english = 0;
-    let is_summer = 0;
-    let is_jakson = 0;
-    let audience_score = 0;
     let tomato_score = 0;
 
     let predictedBoxOffice = "n.a.";
@@ -25,9 +22,6 @@
                 Runtime_in_Minutes,
                 is_R_rated: is_R_rated ? 1 : 0,
                 is_english: is_english ? 1 : 0,
-                is_summer: is_summer ? 1 : 0,
-                is_jakson: is_jakson ? 1 : 0,
-                audience_score,
                 tomato_score
             }),
             {

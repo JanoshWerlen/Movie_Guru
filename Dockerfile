@@ -22,3 +22,10 @@ CMD [ "python", "-m" , "flask", "run", "--host=0.0.0.0", "--port=80"]
 
 #az container create --resource-group Scrapy_MDB --name movieguru --image werleja1/movie_guru:latest --dns-name-label movieguru --ports 80 --environment-variables AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=werleja1;AccountKey=Lq7W5Yjdv17UBMc9UQEnUGah15qO9Uzg3qSV+uuSmNTKfPurZmgkYDadHwVzFW82V3mvvDlvkt0p+AStrOJ80A==;EndpointSuffix=core.windows.net"
 
+
+
+
+
+
+
+
